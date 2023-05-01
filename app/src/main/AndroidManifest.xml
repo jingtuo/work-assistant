@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- 腾讯地图引入蓝牙权限, 0.0.1版本不需要, 移除 -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        tools:node="remove" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +22,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkAssistant"
         tools:targetApi="31">
+        <receiver
+            android:name=".receiver.GeofenceReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="io.github.jing.work.assistant.TRIGGER_GEOFENCE"/>
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".AutoClockInActivity"
+            android:exported="false"
+            android:label="@string/auto_clock_in" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,6 +46,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="TencentMapSDK"
+            android:value="V6KBZ-DKZA4-MJKUM-FRVGT-2OYN2-JUFXW" />
     </application>
 
 </manifest>
