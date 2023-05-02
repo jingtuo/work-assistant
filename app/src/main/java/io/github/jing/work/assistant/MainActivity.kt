@@ -24,8 +24,6 @@ class MainActivity : AppCompatActivity() {
 
         TencentLocationManager.setUserAgreePrivacy(true)
 
-        Log.i("Main", "cur thread: ${Thread.currentThread().id},  ${Thread.currentThread().name}")
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

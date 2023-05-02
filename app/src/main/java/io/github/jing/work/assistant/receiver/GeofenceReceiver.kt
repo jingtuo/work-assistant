@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.WorkManager
 import io.github.jing.work.assistant.Constants
 import io.github.jing.work.assistant.R
+import io.github.jing.work.assistant.openQW
 import io.github.jing.work.assistant.worker.createChannel
 import io.github.jing.work.assistant.worker.showNotification
 
@@ -43,18 +44,6 @@ class GeofenceReceiver : BroadcastReceiver() {
                 openQW(context)
             }
         }
-    }
-
-
-    private fun openQW(context: Context) {
-        val intent = Intent()
-        val component =
-            ComponentName("com.tencent.wework", "com.tencent.wework.launch.LaunchSplashActivity")
-        intent.component = component
-        intent.action = Intent.ACTION_MAIN
-        intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
     }
 
     private fun createNotification(context: Context, text: String): Notification {

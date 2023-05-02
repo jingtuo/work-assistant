@@ -25,8 +25,9 @@ class GitlabSettingsActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         binding.btnSave.setOnClickListener {
-            viewModel.save(binding.etDomainName.text.toString(), binding.rbYes.isChecked,
-                binding.etApiVersion.text.toString(), binding.etPersonalAccessToken.text.toString())
+            viewModel.save(binding.etDomainName.text.toString(), binding.etIpAddress.text.toString(),
+                binding.rbYes.isChecked, binding.etApiVersion.text.toString(),
+                binding.etPersonalAccessToken.text.toString())
             finish()
         }
         //显示返回按钮
@@ -34,6 +35,10 @@ class GitlabSettingsActivity : AppCompatActivity() {
 
         viewModel.domainName().observe(this) {
             binding.etDomainName.setText(it, TextView.BufferType.NORMAL)
+        }
+
+        viewModel.ipAddress().observe(this) {
+            binding.etIpAddress.setText(it, TextView.BufferType.NORMAL)
         }
 
         viewModel.useHttps().observe(this) {

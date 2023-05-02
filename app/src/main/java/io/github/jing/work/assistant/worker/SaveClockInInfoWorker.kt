@@ -51,29 +51,13 @@ class SaveClockInInfoWorker(appContext: Context, params: WorkerParameters) :
         val curHour = calendar.get(Calendar.HOUR_OF_DAY)
         val curMinute = calendar.get(Calendar.MINUTE)
 
-        var data = createData(
-            latitude, longitude, clockInInfo.address.detail,
-            Constants.TRIGGER_FLAG_ALL
-        )
-        //测试任务
-        val testWorker = PeriodicWorkRequestBuilder<WorkClockInWorker>(
-            Duration.ofMinutes(15),
-            Duration.ofMinutes(5)
-        )
-            .setInputData(data)
-            .build()
-        workManager.enqueueUniquePeriodicWork(
-            "TEST_CLOCK_IN",
-            ExistingPeriodicWorkPolicy.REPLACE,
-            testWorker
-        )
         //上班打卡任务
         var delayMinutes = calculateMinutes(workStartHour, workStartMinute, curHour, curMinute)
         if (delayMinutes < 0) {
             //工作开始时间已过, 延期到明天
             delayMinutes += 24 * 60
         }
-        data = createData(
+        var data = createData(
             latitude, longitude, clockInInfo.address.detail,
             Constants.TRIGGER_FLAG_IN_RANGE and Constants.TRIGGER_FLAG_STAY_IN_RANGE
         )

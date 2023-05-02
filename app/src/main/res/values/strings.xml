@@ -18,6 +18,7 @@
 
 
     <string name="domain_name">域名</string>
+    <string name="ip_address">IP地址</string>
     <string name="use_https">使用HTTPS</string>
     <string name="yes">是</string>
     <string name="no">否</string>

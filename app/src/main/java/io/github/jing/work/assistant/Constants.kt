@@ -56,6 +56,7 @@ object Constants {
 
     const val GITLAB_DOMAIN_NAME = "GITLAB_DOMAIN_NAME"
     const val GITLAB_DOMAIN_NAME_DEFAULT = "gitlab.com"
+    const val GITLAB_IP_ADDRESS = "GITLAB_IP_ADDRESS"
 
     const val GITLAB_USE_HTTPS = "GITLAB_USE_HTTPS"
 
