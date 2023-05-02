@@ -14,6 +14,9 @@ import io.github.jing.work.assistant.data.ClockInInfo
 import java.time.Duration
 import java.util.Calendar
 
+/**
+ * 保存打卡信息
+ */
 class SaveClockInInfoWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
 
@@ -29,7 +32,8 @@ class SaveClockInInfoWorker(appContext: Context, params: WorkerParameters) :
     }
 
     override suspend fun doWork(): Result {
-        val preferences = applicationContext.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+        val preferences =
+            applicationContext.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
         if (clockInInfoStr.isNullOrEmpty()) {
             return Result.failure()
         }
@@ -46,43 +50,94 @@ class SaveClockInInfoWorker(appContext: Context, params: WorkerParameters) :
         calendar.timeInMillis = System.currentTimeMillis()
         val curHour = calendar.get(Calendar.HOUR_OF_DAY)
         val curMinute = calendar.get(Calendar.MINUTE)
-        val data = Data.Builder()
-            .putDouble(Constants.LATITUDE, latitude)
-            .putDouble(Constants.LONGITUDE, longitude)
-            .putString(Constants.ADDRESS, clockInInfo.address.detail)
-            .build()
+
+        var data = createData(
+            latitude, longitude, clockInInfo.address.detail,
+            Constants.TRIGGER_FLAG_ALL
+        )
         //测试任务
-        val testWorker = PeriodicWorkRequestBuilder<WorkClockInWorker>(Duration.ofMinutes(30), Duration.ofMinutes(5))
+        val testWorker = PeriodicWorkRequestBuilder<WorkClockInWorker>(
+            Duration.ofMinutes(15),
+            Duration.ofMinutes(5)
+        )
             .setInputData(data)
             .build()
-        workManager.enqueueUniquePeriodicWork("TEST_CLOCK_IN", ExistingPeriodicWorkPolicy.REPLACE, testWorker)
-
+        workManager.enqueueUniquePeriodicWork(
+            "TEST_CLOCK_IN",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            testWorker
+        )
         //上班打卡任务
         var delayMinutes = calculateMinutes(workStartHour, workStartMinute, curHour, curMinute)
         if (delayMinutes < 0) {
             //工作开始时间已过, 延期到明天
             delayMinutes += 24 * 60
         }
-        val startWorker = PeriodicWorkRequestBuilder<WorkClockInWorker>(Duration.ofHours(24), Duration.ofMinutes(15))
+        data = createData(
+            latitude, longitude, clockInInfo.address.detail,
+            Constants.TRIGGER_FLAG_IN_RANGE and Constants.TRIGGER_FLAG_STAY_IN_RANGE
+        )
+        val startWorker = PeriodicWorkRequestBuilder<WorkClockInWorker>(
+            Duration.ofHours(24),
+            Duration.ofMinutes(Constants.CLOCK_IN_FLEX_MINUTE_5.toLong())
+        )
             .setInputData(data)
             .setInitialDelay(Duration.ofMinutes(delayMinutes.toLong()))
             .build()
-        workManager.enqueueUniquePeriodicWork(Constants.WORK_START_CLOCK_IN, ExistingPeriodicWorkPolicy.REPLACE, startWorker)
-        //下班打卡任务, 此处增加15分钟, 下班之后15分钟打卡
-        delayMinutes = calculateMinutes(workEndHour, workEndMinute + 15, curHour, curMinute)
+        workManager.enqueueUniquePeriodicWork(
+            Constants.WORK_START_CLOCK_IN,
+            ExistingPeriodicWorkPolicy.REPLACE,
+            startWorker
+        )
+        //下班打卡任务, 此处增加5分钟, 下班之后5分钟内打卡
+        delayMinutes = calculateMinutes(
+            workEndHour,
+            workEndMinute + Constants.CLOCK_IN_FLEX_MINUTE_5,
+            curHour,
+            curMinute
+        )
         if (delayMinutes < 0) {
             //工作结束时间已过, 延期到明天
             delayMinutes += 24 * 60
         }
-        val endWorker = PeriodicWorkRequestBuilder<WorkClockInWorker>(Duration.ofHours(24), Duration.ofMinutes(15))
+        data = createData(
+            latitude, longitude, clockInInfo.address.detail, Constants.TRIGGER_FLAG_ALL
+        )
+        val endWorker = PeriodicWorkRequestBuilder<WorkClockInWorker>(
+            Duration.ofHours(24),
+            Duration.ofMinutes(Constants.CLOCK_IN_FLEX_MINUTE_5.toLong())
+        )
             .setInputData(data)
             .setInitialDelay(Duration.ofMinutes(delayMinutes.toLong()))
             .build()
-        workManager.enqueueUniquePeriodicWork(Constants.WORK_END_CLOCK_IN, ExistingPeriodicWorkPolicy.REPLACE, endWorker)
+        workManager.enqueueUniquePeriodicWork(
+            Constants.WORK_END_CLOCK_IN,
+            ExistingPeriodicWorkPolicy.REPLACE,
+            endWorker
+        )
         return Result.success()
     }
 
-    private fun calculateMinutes(hourLeft: Int, minuteLeft: Int, hourRight: Int, minuteRight: Int): Int {
+    private fun createData(
+        latitude: Double,
+        longitude: Double,
+        address: String,
+        triggerFlags: Int
+    ): Data {
+        return Data.Builder()
+            .putDouble(Constants.LATITUDE, latitude)
+            .putDouble(Constants.LONGITUDE, longitude)
+            .putString(Constants.ADDRESS, address)
+            .putInt(Constants.TRIGGER_FLAGS, triggerFlags)
+            .build()
+    }
+
+    private fun calculateMinutes(
+        hourLeft: Int,
+        minuteLeft: Int,
+        hourRight: Int,
+        minuteRight: Int
+    ): Int {
         return (hourLeft - hourRight) * 60 + minuteLeft - minuteRight
     }
 }

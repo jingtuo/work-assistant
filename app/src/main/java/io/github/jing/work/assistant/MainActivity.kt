@@ -2,6 +2,7 @@ package io.github.jing.work.assistant
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tencent.map.geolocation.TencentLocationManager
 import io.github.jing.work.assistant.databinding.ActivityMainBinding
+import io.github.jing.work.assistant.gitlab.GitlabActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity() {
 
         TencentLocationManager.setUserAgreePrivacy(true)
 
+        Log.i("Main", "cur thread: ${Thread.currentThread().id},  ${Thread.currentThread().name}")
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -30,14 +34,18 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         val layoutManager = GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = layoutManager
-        val functions = listOf(Function("自动打卡", R.drawable.baseline_work_24),
-            Function("Gitlab", R.drawable.baseline_code_24),
-            Function("求助", R.drawable.baseline_help_24)
+        val functions = listOf(Function("自动打卡", R.drawable.baseline_work_24, "auto-clock-in"),
+            Function("Gitlab", R.drawable.baseline_code_24, "gitlab/home"),
+            Function("求助", R.drawable.baseline_help_24, "help")
         )
         val adapter = FunctionAdapter(this, functions)
         adapter.setOnClickFunctionListener(object: FunctionViewHolder.OnClickFunctionListener {
             override fun onClickFunction(data: Function) {
-                startActivity(Intent(this@MainActivity, AutoClockInActivity::class.java))
+                if ("auto-clock-in" == data.route) {
+                    startActivity(Intent(this@MainActivity, AutoClockInActivity::class.java))
+                } else if ("gitlab/home" == data.route) {
+                    startActivity(Intent(this@MainActivity, GitlabActivity::class.java))
+                }
             }
         })
         recyclerView.adapter = adapter
@@ -51,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_settings, menu)
         return true
     }
 

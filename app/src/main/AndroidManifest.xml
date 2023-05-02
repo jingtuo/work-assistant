@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- 腾讯地图引入蓝牙权限, 0.0.1版本不需要, 移除 -->
     <uses-permission
         android:name="android.permission.BLUETOOTH"
@@ -9,7 +8,6 @@
     <uses-permission
         android:name="android.permission.BLUETOOTH_ADMIN"
         tools:node="remove" />
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -22,12 +20,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkAssistant"
         tools:targetApi="31">
+        <activity
+            android:name=".gitlab.settings.GitlabSettingsActivity"
+            android:exported="false"
+            android:label="@string/gitlab_settings"
+            android:launchMode="singleTop"/>
+
+        <activity
+            android:name=".gitlab.GitlabActivity"
+            android:exported="false"
+            android:label="@string/gitlab"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.WorkAssistant"/>
+
         <receiver
             android:name=".receiver.GeofenceReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="io.github.jing.work.assistant.TRIGGER_GEOFENCE"/>
+                <action android:name="io.github.jing.work.assistant.TRIGGER_GEOFENCE" />
             </intent-filter>
         </receiver>
 

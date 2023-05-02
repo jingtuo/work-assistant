@@ -30,6 +30,7 @@
     }
     ```
 3. 使用WorkManager添加定时任务启动企微
+4. 为了减少对设备的电量消耗, 设计成在上下班打卡时间的前后5分钟内进行打卡, 但是腾讯地图的地理围栏是在用户进出地理围栏才触发, 用户可能不在设定5分钟内进出地理围栏, 最终设计成在5分钟开启持续定位功能, 只要发现在办公地点附近就打开企微
 
 
 
@@ -45,6 +46,7 @@
     - 高德地图API跟百度地图API十分相似
 - [调度精准闹钟](https://developer.android.google.cn/about/versions/14/changes/schedule-exact-alarms)
 - [MDC-Android](https://github.com/material-components/material-components-android)
+- [OkHttp](https://github.com/square/okhttp)
 
 ## 课外知识
 

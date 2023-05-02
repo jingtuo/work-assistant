@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.location.LocationManager
 import androidx.core.app.NotificationCompat
 import androidx.work.WorkManager
 import io.github.jing.work.assistant.Constants
@@ -17,17 +16,29 @@ class GeofenceReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (ACTION_TRIGGER_GEOFENCE == intent.action) {
-            val enter = intent.getBooleanExtra(LocationManager.KEY_PROXIMITY_ENTERING, false)
-            var address = intent.getStringExtra(Constants.ADDRESS)
+            var triggerFlag = intent.getIntExtra(Constants.TRIGGER_FLAG, Constants.TRIGGER_FLAG_NONE)
             val workManager = WorkManager.getInstance(context)
-            if (enter) {
+            if (Constants.TRIGGER_FLAG_NONE == triggerFlag) {
+                return
+            }
+            if (Constants.TRIGGER_FLAG_IN_RANGE == triggerFlag) {
                 //进入
-                context.showNotification(createNotification(context, "进入: $address"))
+                context.showNotification(createNotification(context, "进入"))
                 workManager.cancelUniqueWork(Constants.WORK_START_CLOCK_IN)
                 openQW(context)
-            } else {
+            } else if (Constants.TRIGGER_FLAG_STAY_IN_RANGE == triggerFlag) {
+                //停留
+                context.showNotification(createNotification(context, "停留在范围内"))
+                workManager.cancelUniqueWork(Constants.WORK_END_CLOCK_IN)
+                openQW(context)
+            } else if (Constants.TRIGGER_FLAG_OUT_OF_RANGE == triggerFlag) {
                 //退出
-                context.showNotification(createNotification(context, "离开: $address"))
+                context.showNotification(createNotification(context, "离开"))
+                workManager.cancelUniqueWork(Constants.WORK_END_CLOCK_IN)
+                openQW(context)
+            } else if (Constants.TRIGGER_FLAG_STAY_OUT_OF_RANGE == triggerFlag) {
+                //停留
+                context.showNotification(createNotification(context, "停留在范围外"))
                 workManager.cancelUniqueWork(Constants.WORK_END_CLOCK_IN)
                 openQW(context)
             }
@@ -53,7 +64,6 @@ class GeofenceReceiver : BroadcastReceiver() {
             .setContentTitle(context.getString(R.string.auto_clock_in))
             .setContentText(text)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setOngoing(true)
             .setShowWhen(true)
             .build()
     }
