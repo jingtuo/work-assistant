@@ -8,7 +8,19 @@
     <uses-permission
         android:name="android.permission.BLUETOOTH_ADMIN"
         tools:node="remove" />
+
+    <!-- 危险权限: dangerous -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- 普通权限: normal -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
+    <!-- appop -->
+    <!-- 同时使用USE_EXACT_ALARM和SCHEDULE_EXACT_ALARM, SCHEDULE_EXACT_ALARM必须设置maxSdkVersion -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -21,17 +33,19 @@
         android:theme="@style/Theme.WorkAssistant"
         tools:targetApi="31">
         <activity
+            android:name=".HelperActivity"
+            android:exported="false" />
+        <activity
             android:name=".gitlab.settings.GitlabSettingsActivity"
             android:exported="false"
             android:label="@string/gitlab_settings"
-            android:launchMode="singleTop"/>
-
+            android:launchMode="singleTop" />
         <activity
             android:name=".gitlab.GitlabActivity"
             android:exported="false"
             android:label="@string/gitlab"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.WorkAssistant"/>
+            android:theme="@style/Theme.WorkAssistant" />
 
         <receiver
             android:name=".receiver.GeofenceReceiver"
@@ -39,6 +53,14 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="io.github.jing.work.assistant.TRIGGER_GEOFENCE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".receiver.ClockInReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="io.github.jing.work.assistant.ACTION_CLOCK_IN" />
             </intent-filter>
         </receiver>
 
@@ -61,6 +83,11 @@
         <meta-data
             android:name="TencentMapSDK"
             android:value="V6KBZ-DKZA4-MJKUM-FRVGT-2OYN2-JUFXW" />
+
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="location"
+            tools:node="merge" />
     </application>
 
 </manifest>

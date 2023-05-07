@@ -1,9 +1,13 @@
 package io.github.jing.work.assistant.vm
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Looper
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -27,7 +31,13 @@ import io.github.jing.work.assistant.Constants
 import io.github.jing.work.assistant.data.Address
 import io.github.jing.work.assistant.data.HourMinute
 import io.github.jing.work.assistant.data.ClockInInfo
-import io.github.jing.work.assistant.worker.SaveClockInInfoWorker
+import io.github.jing.work.assistant.source.SaveClockIn
+import io.github.jing.work.assistant.worker.SaveClockInWorker
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.functions.Consumer
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.Calendar
 
 class AutoClockInViewModel(app: Application) : AndroidViewModel(app) {
@@ -50,7 +60,14 @@ class AutoClockInViewModel(app: Application) : AndroidViewModel(app) {
 
     private val gson = GsonBuilder().create()
 
+    private val powerManager: PowerManager
+
+    private val app: Application
+
+    private val composeDisable = CompositeDisposable()
+
     init {
+        this.app = app
         locationManager = TencentLocationManager.getInstance(app)
         preferences = app.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
         val clockInInfoStr = preferences.getString(Constants.CLOCK_IN_INFO, "")
@@ -60,6 +77,7 @@ class AutoClockInViewModel(app: Application) : AndroidViewModel(app) {
             workStartTime.value = clockInInfo.workStartTime
             workEndTime.value = clockInInfo.workEndTime
         }
+        powerManager = app.getSystemService(Context.POWER_SERVICE) as PowerManager
     }
 
     fun setStartWorkTime(hour: Int, minute: Int) {
@@ -167,35 +185,15 @@ class AutoClockInViewModel(app: Application) : AndroidViewModel(app) {
             error.value = "请设置下班打卡时间"
             return
         }
-        val data = Data.Builder()
-            .putString(
-                Constants.CLOCK_IN_INFO,
-                Gson().toJson(
-                    ClockInInfo(
-                        workAddress.value!!,
-                        workStartTime.value!!,
-                        workEndTime.value!!
-                    )
-                )
-            )
-            .build()
-        val operation = WorkManager.getInstance(getApplication())
-            .beginWith(
-                OneTimeWorkRequestBuilder<SaveClockInInfoWorker>()
-                    .setInputData(data)
-                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                    .build()
-            ).enqueue()
-        saveResult.addSource(operation.state, object: Observer<Operation.State> {
-            override fun onChanged(state: Operation.State?) {
-                if (state is SUCCESS) {
-                    saveResult.value = true
-                } else if (state is FAILURE) {
-                    error.value = state.throwable.message
-                }
-            }
-
-        })
+        val clockInInfo = ClockInInfo(workAddress.value!!, workStartTime.value!!, workEndTime.value!!)
+        composeDisable.add(Single.create(SaveClockIn(app, clockInInfo))
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                saveResult.value = true
+            }, {
+                error.value = it.message
+            }))
     }
 
     fun error(): LiveData<String> {

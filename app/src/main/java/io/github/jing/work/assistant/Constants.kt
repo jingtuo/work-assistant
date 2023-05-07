@@ -19,6 +19,15 @@ object Constants {
 
     const val ADDRESS = "ADDRESS"
 
+    const val WORK_START_HOUR = "WORK_START_HOUR"
+
+    const val WORK_START_MINUTE = "WORK_START_MINUTE"
+
+    const val WORK_END_HOUR = "WORK_END_HOUR"
+
+    const val WORK_END_MINUTE = "WORK_END_MINUTE"
+
+
     const val WORK_START_CLOCK_IN = "WORK_START_CLOCK_IN"
     const val WORK_END_CLOCK_IN = "WORK_END_CLOCK_IN"
 
@@ -63,4 +72,11 @@ object Constants {
     const val GITLAB_API_VERSION = "GITLAB_API_VERSION"
 
     const val GITLAB_PERSONAL_ACCESS_TOKEN = "GITLAB_PERSONAL_ACCESS_TOKEN"
+
+    const val AUTO_CLOCK_IN_FLAG = "AUTO_CLOCK_IN_FLAG"
+
+
+    const val UNIQUE_WORK_CLOCK_IN = "CLOCK_IN"
+
+    const val MINUTES_OF_DAY = 24 * 60
 }

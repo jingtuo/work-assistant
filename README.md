@@ -2,11 +2,19 @@
 
 ## 技术选型
 
-1. 使用Kotlin开发语言, 属性Kotlin特性
+1. 使用Kotlin开发语言, 熟悉Kotlin特性
 2. 使用Xml创建定义布局, 因为Compose的许多组件还处于试验阶段, 一定程序上影响开发效率, 后续部分组件使用Compose
 3. 使用移动安全联盟的OAID, 需要营业执照, 所以选择UUID记录一个deviceId
 4. 定位SDK选择腾讯地图, 考虑后续在微信小程序里面使用定位功能
 
+### 兼容问题
+
+| 类 | 方法 | OPPO Reno 3 元气版 | 
+| :-- | :-- | :-- |
+| AlarmManager | setInexactRepeating | 应用切后台锁屏, 闹钟无法触发, 解锁打开应用, 触发闹钟 |
+| AlarmManager | setExactAndAllowWhileIdle | 应用切后台锁屏, 闹钟无法触发, 解锁打开应用, 触发闹钟 |
+| PowerManager | isIgnoringBatteryOptimizations | false |
+| Settings | ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS | No Activity found to handle Intent |
 
 ## 版本
 
@@ -44,11 +52,17 @@
 - [腾讯地图 API](https://lbs.qq.com/mobile/androidLocationSDK/androidGeoGuide/androidGeoContinue)
     - 百度地图API的地理围栏更新时间过旧(20220708)
     - 高德地图API跟百度地图API十分相似
-- [调度精准闹钟](https://developer.android.google.cn/about/versions/14/changes/schedule-exact-alarms)
 - [MDC-Android](https://github.com/material-components/material-components-android)
 - [OkHttp](https://github.com/square/okhttp)
+- [Calendar Provder](https://developer.android.google.cn/guide/topics/providers/calendar-provider?hl=en)
+- [Alarm](https://developer.android.google.cn/training/scheduling/alarms?hl=zh-cn)
+- [Schedule Exact Alarms](https://developer.android.google.cn/about/versions/14/changes/schedule-exact-alarms?hl=en)
+- [常用Intent](https://developer.android.google.cn/guide/components/intents-common?hl=zh-cn)
+- [低电耗模式或待机模式下的优化](https://developer.android.google.cn/training/monitoring-device-state/doze-standby?hl=zh-cn#exemption-cases)
+- [电池管理限制](https://developer.android.google.cn/topic/performance/power/power-details?hl=zh-cn)
+
 
 ## 课外知识
 
 1. gradle 8.0要求的jdk 17
-3. Material Theme Builder可以创建M3的主题, 但是国内无法访问, 求镜像资源
+2. Material Theme Builder可以创建M3的主题, 但是国内无法访问, 求镜像资源

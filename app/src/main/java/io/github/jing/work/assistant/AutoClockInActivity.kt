@@ -1,12 +1,19 @@
 package io.github.jing.work.assistant
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.AlarmClock
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -15,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import io.github.jing.work.assistant.data.Address
 import io.github.jing.work.assistant.databinding.ActivityAutoClockInBinding
+import io.github.jing.work.assistant.receiver.ClockInReceiver
 import io.github.jing.work.assistant.vm.AutoClockInViewModel
 import io.github.jing.work.assistant.widget.AddressAdapter
 

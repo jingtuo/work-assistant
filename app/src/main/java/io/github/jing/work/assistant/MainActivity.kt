@@ -43,6 +43,8 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this@MainActivity, AutoClockInActivity::class.java))
                 } else if ("gitlab/home" == data.route) {
                     startActivity(Intent(this@MainActivity, GitlabActivity::class.java))
+                } else if ("help" == data.route) {
+                    startActivity(Intent(this@MainActivity, HelperActivity::class.java))
                 }
             }
         })
