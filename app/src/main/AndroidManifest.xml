@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- 腾讯地图引入蓝牙权限, 0.0.1版本不需要, 移除 -->
+    <!-- 百度地图引入 -->
+    <!-- 这个权限用于进行网络定位, 危险权限 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 这个权限用于访问系统接口提供的卫星定位信息, 危险权限 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位, 普通权限 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 获取运营商信息，用于支持提供运营商信息相关的接口, 普通权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位, 普通权限 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 访问网络，网络定位需要上网, 普通权限 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据, 危险权限 -->
     <uses-permission
-        android:name="android.permission.BLUETOOTH"
-        tools:node="remove" />
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" /> <!-- 读取缓存数据 危险权限 -->
     <uses-permission
-        android:name="android.permission.BLUETOOTH_ADMIN"
-        tools:node="remove" />
-
-    <!-- 危险权限: dangerous -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!-- 普通权限: normal -->
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" /> <!-- 用于读取手机当前的状态 危险权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> <!-- 危险权限: dangerous -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- 普通权限: normal -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-
-    <!-- appop -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- appop -->
     <!-- 同时使用USE_EXACT_ALARM和SCHEDULE_EXACT_ALARM, SCHEDULE_EXACT_ALARM必须设置maxSdkVersion -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -32,6 +38,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkAssistant"
         tools:targetApi="31">
+
+        <activity
+            android:name=".gitlab.project.ProjectActivity"
+            android:exported="false"
+            android:theme="@style/Theme.WorkAssistant" />
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="32HHMrlWLLH939SuKZO6nD3CAM0wjlrL" />
+
         <activity
             android:name=".HelperActivity"
             android:exported="false" />
@@ -48,14 +64,6 @@
             android:theme="@style/Theme.WorkAssistant" />
 
         <receiver
-            android:name=".receiver.GeofenceReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="io.github.jing.work.assistant.TRIGGER_GEOFENCE" />
-            </intent-filter>
-        </receiver>
-        <receiver
             android:name=".receiver.ClockInReceiver"
             android:enabled="true"
             android:exported="false">
@@ -67,11 +75,12 @@
         <activity
             android:name=".AutoClockInActivity"
             android:exported="false"
-            android:label="@string/auto_clock_in" />
+            android:label="@string/auto_clock_in" /> <!-- 由于通知会打开主页, 将主页设置singleTask -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.WorkAssistant">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -80,14 +89,18 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="TencentMapSDK"
-            android:value="V6KBZ-DKZA4-MJKUM-FRVGT-2OYN2-JUFXW" />
-
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="location"
             tools:node="merge" />
+        <service
+            android:name=".service.ClockInService"
+            android:foregroundServiceType="location"></service> <!-- 百度地图引入 -->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:foregroundServiceType="location"
+            android:process=":remote" />
     </application>
 
 </manifest>

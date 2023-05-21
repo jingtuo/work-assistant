@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     
     <color name="gray_500">#9E9E9E</color>
+    <color name="divider_line_color">@color/gray_500</color>
 </resources>

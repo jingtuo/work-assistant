@@ -31,7 +31,6 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="10dp">
 
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/l_domain_name"
                 android:layout_width="match_parent"

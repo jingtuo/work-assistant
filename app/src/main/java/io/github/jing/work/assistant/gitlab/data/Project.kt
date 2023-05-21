@@ -1,19 +1,46 @@
 package io.github.jing.work.assistant.gitlab.data
 
+import androidx.annotation.Keep
+import androidx.recyclerview.widget.DiffUtil
 import java.util.Date
 
-data class Project(val id: Int, val name: String) {
+
+/**
+ * 使用Gson解析, 不允许父类声明相同的属性
+ * Caused by: java.lang.IllegalArgumentException:
+ * Class io.github.jing.work.assistant.gitlab.data.Project declares multiple JSON fields named 'id';
+ * conflict is caused by fields io.github.jing.work.assistant.gitlab.data.Project#id
+ * and io.github.jing.work.assistant.gitlab.data.BaseData#id
+ *
+ * 如果有一个属性: id, kotlin不允许定义函数: fun getId(): Int
+ */
+@Keep
+data class Project(val id: Int, val name: String): BaseData {
     //simple
-    private var description: String = ""
-    private var defaultBranch: String? = null
-    private var sshUrlToRepo = ""
-    private var httpUrlToRepo = ""
-    private var webUrl = ""
-    private var readmeUrl = ""
-    private var tagList: Array<String>? = null
-    private var createdAt: Date? = null
-    private var lastActivityAt: Date? = null
+    var description: String = ""
+    var defaultBranch: String? = null
+    var sshUrlToRepo = ""
+    var httpUrlToRepo = ""
+    var webUrl = ""
+    var readmeUrl = ""
+    var tagList: Array<String>? = null
+    var path: String = ""
+    var pathWithNamespace: String = ""
+
+    /**
+     * 日期格式: 2023-05-15T08:28:20.640Z
+     */
+    var createdAt: Date? = null
+    var lastActivityAt: Date? = null
+    var avatarUrl: String? = null
+    var forksCount: Int = 0
+    var starCount: Int = 0
+
 
     //其他
     private var visibility: String? = null
+    override fun getCompareId(): Int {
+        return id
+    }
+
 }

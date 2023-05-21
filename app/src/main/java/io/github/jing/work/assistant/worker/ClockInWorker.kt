@@ -12,11 +12,11 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import com.tencent.map.geolocation.TencentLocationManager
-import com.tencent.map.geolocation.TencentLocationRequest
 import io.github.jing.work.assistant.Constants
 import io.github.jing.work.assistant.Ids
 import io.github.jing.work.assistant.R
+import io.github.jing.work.assistant.ext.createChannel
+import io.github.jing.work.assistant.ext.showNotification
 import io.github.jing.work.assistant.openQW
 import kotlinx.coroutines.delay
 import java.util.Calendar
@@ -31,7 +31,6 @@ import kotlin.time.Duration.Companion.minutes
 class ClockInWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params), ClockInLocationListener.OnTriggerListener {
 
-    private val locationManager: TencentLocationManager
     private val notificationManager: NotificationManagerCompat
     private val latitude: Double
     private val longitude: Double
@@ -49,7 +48,6 @@ class ClockInWorker(appContext: Context, params: WorkerParameters) :
     private val locationListener: ClockInLocationListener
 
     init {
-        locationManager = TencentLocationManager.getInstance(appContext)
         notificationManager = NotificationManagerCompat.from(appContext)
         latitude = params.inputData.getDouble(Constants.LATITUDE, 0.0)
         longitude = params.inputData.getDouble(Constants.LONGITUDE, 0.0)
@@ -72,11 +70,11 @@ class ClockInWorker(appContext: Context, params: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         val wakeLockTag = "${applicationContext.packageName}.CLOCK_IN"
-        val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, wakeLockTag)
+//        val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, wakeLockTag)
         try {
-            setForeground(createForeground())
-            wakeLock.acquire(10000)
-            if (wakeLock.isHeld) {
+//            setForeground(createForeground())
+//            wakeLock.acquire(10000)
+//            if (wakeLock.isHeld) {
                 val calendar = Calendar.getInstance()
                 calendar.timeInMillis = System.currentTimeMillis()
                 var curHour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -101,6 +99,7 @@ class ClockInWorker(appContext: Context, params: WorkerParameters) :
                             delay(abs(toEndMinutes).minutes)
                         }
                         release()
+                        calendar.timeInMillis = System.currentTimeMillis()
                         curHour = calendar.get(Calendar.HOUR_OF_DAY)
                         curMinute = calendar.get(Calendar.MINUTE)
                         continue
@@ -132,16 +131,17 @@ class ClockInWorker(appContext: Context, params: WorkerParameters) :
                         //下班打卡
                         delay(toEndMinutes.minutes)
                     }
+                    calendar.timeInMillis = System.currentTimeMillis()
                     curHour = calendar.get(Calendar.HOUR_OF_DAY)
                     curMinute = calendar.get(Calendar.MINUTE)
                 }
-            }
+//            }
             return Result.success()
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
             return Result.failure(Data.Builder().putString("error", e.message).build())
         } finally {
-            wakeLock.release()
+//            wakeLock.release()
         }
     }
 
@@ -174,19 +174,19 @@ class ClockInWorker(appContext: Context, params: WorkerParameters) :
     }
 
     private fun clockIn() {
-        val request = TencentLocationRequest.create()
-        request.locMode = TencentLocationRequest.HIGH_ACCURACY_MODE
-        request.isAllowCache = false
-        request.isAllowGPS = true
-        request.isAllowDirection = false
-        request.requestLevel = TencentLocationRequest.REQUEST_LEVEL_GEO
-        //每15秒获取
-        request.interval = 15000
-        locationManager.requestLocationUpdates(request, locationListener, Looper.getMainLooper())
+//        val request = TencentLocationRequest.create()
+//        request.locMode = TencentLocationRequest.HIGH_ACCURACY_MODE
+//        request.isAllowCache = false
+//        request.isAllowGPS = true
+//        request.isAllowDirection = false
+//        request.requestLevel = TencentLocationRequest.REQUEST_LEVEL_GEO
+//        //每15秒获取
+//        request.interval = 15000
+//        locationManager.requestLocationUpdates(request, locationListener, Looper.getMainLooper())
     }
 
     private fun release() {
-        locationManager.removeUpdates(locationListener)
+//        locationManager.removeUpdates(locationListener)
     }
 
     override fun onTrigger(flag: Int, text: String) {

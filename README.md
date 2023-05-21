@@ -9,16 +9,23 @@
 
 ### 兼容问题
 
-| 类 | 方法 | OPPO Reno 3 元气版 | 
+| 类 | 属性/方法 | OPPO Reno 3 元气版 | 
 | :-- | :-- | :-- |
 | AlarmManager | setInexactRepeating | 应用切后台锁屏, 闹钟无法触发, 解锁打开应用, 触发闹钟 |
 | AlarmManager | setExactAndAllowWhileIdle | 应用切后台锁屏, 闹钟无法触发, 解锁打开应用, 触发闹钟 |
+| AlarmManager | ACTION_NEXT_ALARM_CLOCK_CHANGED  与getNextAlarmClock配合使用, 下一个闹钟被修改(删除)之后触发 | 应用切换至后台, 不会收到广播 |
 | PowerManager | isIgnoringBatteryOptimizations | false |
 | Settings | ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS | No Activity found to handle Intent |
+| Intent | ACTION_TIME_TICK  每分钟开始(05:00)触发一次 | 应用切后台锁屏, 闹钟无法触发, 解锁打开应用, 收到最近一次的广播 |
+| Intent | ACTION_SCREEN_ON  | 应用处于前台, 点亮屏幕, 不论是否解锁成功, 应用就能收到广播; 应用处于后台, 不会收到广播 | 
+| RoleManager | createRequestRoleIntent(RoleManager.ROLE_DIALER) | 直接返回Activity.RESULT_CANCELED |
 
 ## 版本
 
-### 0.0.1
+### 0.0.2
+
+
+### 0.0.1(废弃)
 
 1. 基于ActivityTaskManager的日志, 找到企微的包名以及入口页面
     ```text
@@ -48,10 +55,9 @@
 - [WorkManager 概览](https://developer.android.google.cn/topic/libraries/architecture/workmanager?hl=zh-cn)
 - [Background Work with WorkManager](https://developer.android.google.cn/codelabs/basic-android-kotlin-compose-workmanager?continue=https%3A%2F%2Fdeveloper.android.google.cn%2Fcourses%2Fpathways%2Fandroid-basics-compose-unit-7-pathway-1%3Fhl%3Den%23codelab-https%3A%2F%2Fdeveloper.android.com%2Fcodelabs%2Fbasic-android-kotlin-compose-workmanager&hl=en#0)
 - [Material Design 3](https://developer.android.google.cn/jetpack/compose/designsystems/material3)
-- [Material Design 3 Component](https://developer.android.google.cn/reference/kotlin/androidx/compose/material3/package-summary)
+- [MD3 Component Compose](https://developer.android.google.cn/reference/kotlin/androidx/compose/material3/package-summary)
+- [MD3 Component](https://github.com/material-components/material-components-android/blob/master/docs/components/)
 - [腾讯地图 API](https://lbs.qq.com/mobile/androidLocationSDK/androidGeoGuide/androidGeoContinue)
-    - 百度地图API的地理围栏更新时间过旧(20220708)
-    - 高德地图API跟百度地图API十分相似
 - [MDC-Android](https://github.com/material-components/material-components-android)
 - [OkHttp](https://github.com/square/okhttp)
 - [Calendar Provder](https://developer.android.google.cn/guide/topics/providers/calendar-provider?hl=en)
@@ -60,7 +66,9 @@
 - [常用Intent](https://developer.android.google.cn/guide/components/intents-common?hl=zh-cn)
 - [低电耗模式或待机模式下的优化](https://developer.android.google.cn/training/monitoring-device-state/doze-standby?hl=zh-cn#exemption-cases)
 - [电池管理限制](https://developer.android.google.cn/topic/performance/power/power-details?hl=zh-cn)
-
+- [Foreground Service](https://developer.android.google.cn/guide/components/foreground-services?hl=en)
+- [Paging](https://developer.android.google.cn/topic/libraries/architecture/paging/v3-overview?hl=zh-cn)
+- [修改状态栏颜色](https://developer.android.google.cn/develop/ui/views/layout/edge-to-edge)
 
 ## 课外知识
 

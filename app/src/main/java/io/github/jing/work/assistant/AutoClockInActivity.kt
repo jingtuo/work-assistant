@@ -1,9 +1,8 @@
 package io.github.jing.work.assistant
 
 import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.app.role.RoleManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
@@ -11,8 +10,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.AlarmClock
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import io.github.jing.work.assistant.data.Address
 import io.github.jing.work.assistant.databinding.ActivityAutoClockInBinding
-import io.github.jing.work.assistant.receiver.ClockInReceiver
 import io.github.jing.work.assistant.vm.AutoClockInViewModel
 import io.github.jing.work.assistant.widget.AddressAdapter
 
@@ -35,6 +31,8 @@ class AutoClockInActivity : AppCompatActivity() {
 
     private lateinit var viewModel: AutoClockInViewModel
 
+    private lateinit var intentLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAutoClockInBinding.inflate(layoutInflater)
@@ -45,7 +43,9 @@ class AutoClockInActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-
+        intentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            Log.i("Test", "${it.resultCode}, ${it.data}")
+        }
         requestLocationLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                 if (it.containsKey(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -108,6 +108,9 @@ class AutoClockInActivity : AppCompatActivity() {
         }
 
         binding.btnSave.setOnClickListener {
+//            val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
+//            val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER)
+//            intentLauncher.launch(intent)
             //保存
             viewModel.save()
         }

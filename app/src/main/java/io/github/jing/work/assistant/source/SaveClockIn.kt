@@ -30,8 +30,8 @@ class SaveClockIn(private val context: Context, private val clockInInfo: ClockIn
             .setInputData(data)
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .build()
-        workManager.beginUniqueWork(Constants.UNIQUE_WORK_CLOCK_IN, ExistingWorkPolicy.REPLACE, request)
-            .enqueue()
+//        workManager.beginUniqueWork(Constants.UNIQUE_WORK_CLOCK_IN, ExistingWorkPolicy.REPLACE, request)
+//            .enqueue()
         emitter.onSuccess("保存成功")
     }
 }

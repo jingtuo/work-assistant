@@ -2,7 +2,6 @@ package io.github.jing.work.assistant
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -10,7 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.tencent.map.geolocation.TencentLocationManager
+import com.baidu.location.LocationClient
 import io.github.jing.work.assistant.databinding.ActivityMainBinding
 import io.github.jing.work.assistant.gitlab.GitlabActivity
 
@@ -22,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
-        TencentLocationManager.setUserAgreePrivacy(true)
+        LocationClient.setAgreePrivacy(true)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         val layoutManager = GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = layoutManager
-        val functions = listOf(Function("自动打卡", R.drawable.baseline_work_24, "auto-clock-in"),
+        val functions = listOf(
             Function("Gitlab", R.drawable.baseline_code_24, "gitlab/home"),
             Function("求助", R.drawable.baseline_help_24, "help")
         )

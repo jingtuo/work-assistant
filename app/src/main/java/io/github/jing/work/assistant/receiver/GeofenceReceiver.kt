@@ -2,45 +2,40 @@ package io.github.jing.work.assistant.receiver
 
 import android.app.Notification
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.WorkManager
+import com.baidu.geofence.GeoFence
 import io.github.jing.work.assistant.Constants
 import io.github.jing.work.assistant.R
+import io.github.jing.work.assistant.ext.createChannel
+import io.github.jing.work.assistant.ext.showNotification
 import io.github.jing.work.assistant.openQW
-import io.github.jing.work.assistant.worker.createChannel
-import io.github.jing.work.assistant.worker.showNotification
 
 class GeofenceReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (ACTION_TRIGGER_GEOFENCE == intent.action) {
-            var triggerFlag = intent.getIntExtra(Constants.TRIGGER_FLAG, Constants.TRIGGER_FLAG_NONE)
+        Log.i(TAG, "${intent.action} arrived")
+        if (ACTION_GEOFENCE == intent.action) {
+            //围栏行为
+            val fenceStatus = intent.getIntExtra(GeoFence.BUNDLE_KEY_FENCESTATUS, GeoFence.STATUS_UNKNOWN)
+            val fenceId = intent.getStringExtra(GeoFence.BUNDLE_KEY_FENCEID);
+            val customId = intent.getStringExtra(GeoFence.BUNDLE_KEY_CUSTOMID)
+            Log.i(TAG, "fenceId ${fenceId}, customId ${customId}, fenceStatus: $fenceStatus")
             val workManager = WorkManager.getInstance(context)
-            if (Constants.TRIGGER_FLAG_NONE == triggerFlag) {
-                return
-            }
-            if (Constants.TRIGGER_FLAG_IN_RANGE == triggerFlag) {
+            if (GeoFence.STATUS_IN == fenceStatus) {
                 //进入
                 context.showNotification(createNotification(context, "进入"))
-                workManager.cancelUniqueWork(Constants.WORK_START_CLOCK_IN)
                 openQW(context)
-            } else if (Constants.TRIGGER_FLAG_STAY_IN_RANGE == triggerFlag) {
+            } else if (GeoFence.STATUS_STAYED == fenceStatus) {
                 //停留
                 context.showNotification(createNotification(context, "停留在范围内"))
-                workManager.cancelUniqueWork(Constants.WORK_END_CLOCK_IN)
                 openQW(context)
-            } else if (Constants.TRIGGER_FLAG_OUT_OF_RANGE == triggerFlag) {
+            } else if (GeoFence.STATUS_OUT == fenceStatus) {
                 //退出
                 context.showNotification(createNotification(context, "离开"))
-                workManager.cancelUniqueWork(Constants.WORK_END_CLOCK_IN)
-                openQW(context)
-            } else if (Constants.TRIGGER_FLAG_STAY_OUT_OF_RANGE == triggerFlag) {
-                //停留
-                context.showNotification(createNotification(context, "停留在范围外"))
-                workManager.cancelUniqueWork(Constants.WORK_END_CLOCK_IN)
                 openQW(context)
             }
         }
@@ -58,6 +53,7 @@ class GeofenceReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        const val ACTION_TRIGGER_GEOFENCE = "io.github.jing.work.assistant.TRIGGER_GEOFENCE"
+        const val TAG = "GeofenceReceiver"
+        const val ACTION_GEOFENCE = "io.github.jing.work.assistant.GEOFENCE"
     }
 }
