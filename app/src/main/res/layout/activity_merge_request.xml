@@ -5,44 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".gitlab.project.ProjectActivity">
+    tools:context=".gitlab.mr.MergeRequestActivity">
 
     <include
         layout="@layout/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_merge_request"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:drawableEnd="@drawable/round_arrow_forward_ios_12"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:text="@string/merge_request" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </androidx.core.widget.NestedScrollView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_create_project"
+        android:id="@+id/btn_create_merge_request"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
-        android:contentDescription="@string/create_project"
+        android:contentDescription="@string/create_merge_request"
         app:srcCompat="@drawable/baseline_add_circle_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

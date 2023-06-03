@@ -62,18 +62,19 @@ interface Gitlab {
     ): Single<List<MergeRequest>>
 
     @GET("projects/{pid}/merge_requests/{mrIid}/changes")
-    fun mrChanges(@Path("pid") pid: Int, @Path("mrIid") mrIid: Int)
+    fun mrChanges(@Path("pid") pid: Int, @Path("mrIid") mrIid: Int): Single<MergeRequest>
 
     @PUT("projects/{pid}/merge_requests/{mrIid}/merge")
     fun mergeMR(@Path("pid") pid: Int, @Path("mrIid") mrIid: Int): Single<MergeRequest>
 
     @PUT("projects/{pid}/merge_requests/{mrIid}/rebase")
-    fun rebaseMR(@Path("pid") pid: Int, @Path("mrIid") mrIid: Int)
+    fun rebaseMR(@Path("pid") pid: Int, @Path("mrIid") mrIid: Int): Single<MrRebase>
 
     @PUT("projects/{pid}/merge_requests/{mrIid}")
     fun updateMR(
         @Path("pid") pid: Int, @Path("mrIid") mrIid: Int,
-        @Field("title") title: String,
+        @Field("title") title: String? = null,
+        @Field("description") description: String? = null,
         @Field("state_event") stateEvent: String = "close" //close、reopen
-    )
+    ): Single<MergeRequest>
 }

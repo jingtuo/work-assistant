@@ -1,11 +1,13 @@
 package io.github.jing.work.assistant.gitlab
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,11 +22,12 @@ import io.github.jing.work.assistant.gitlab.data.Project
 import io.github.jing.work.assistant.gitlab.project.ProjectActivity
 import io.github.jing.work.assistant.gitlab.settings.GitlabSettingsActivity
 import io.github.jing.work.assistant.gitlab.widget.ProjectAdapter
-import io.github.jing.work.assistant.gitlab.widget.ProjectViewHolder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class GitlabActivity : BaseActivity<ActivityGitlabBinding>() {
+
+    private lateinit var launcher: ActivityResultLauncher<Intent>
 
     private lateinit var viewModel: GitlabViewModel
 
@@ -41,11 +44,20 @@ class GitlabActivity : BaseActivity<ActivityGitlabBinding>() {
         binding.recyclerView.addItemDecoration(divider)
         binding.recyclerView.adapter = ProjectAdapter(this,  object: OnClickItemListener<Project> {
             override fun onClick(view: View, data: Project) {
-                val intent = Intent(this@GitlabActivity, ProjectActivity::class.java)
-                intent.putExtra(ProjectActivity.PROJECT_ID, data.id)
+                val intent = Intent(this@GitlabActivity, ProjectActivity::class.java).apply {
+                    putExtra(Keys.PROJECT_ID, data.id)
+                    putExtra(Keys.PROJECT_NAME, data.name)
+                }
                 startActivity(intent)
             }
         })
+        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())  {
+            if (it.resultCode == Activity.RESULT_OK) {
+                loadProjects()
+            } else {
+                finish()
+            }
+        }
         //初始化Gitlab
         viewModel.initGitlab()
         if (GitlabManager.instance.gitlab == null) {
@@ -75,24 +87,11 @@ class GitlabActivity : BaseActivity<ActivityGitlabBinding>() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onActivityResult(result: ActivityResult) {
-        if (RESULT_OK == result.resultCode) {
-            loadProjects()
-        } else {
-            finish()
-        }
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_settings) {
             startActivity(Intent(this@GitlabActivity, GitlabSettingsActivity::class.java))
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        viewModel.getProjects()
     }
 }

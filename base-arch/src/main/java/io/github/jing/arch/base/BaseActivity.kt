@@ -11,20 +11,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseActivity<T: ViewBinding>: AppCompatActivity(), ActivityResultCallback<ActivityResult> {
+abstract class BaseActivity<T: ViewBinding>: AppCompatActivity() {
 
     lateinit var binding: T
 
     //actionBar的返回按钮可用
     var backEnabled = false
 
-    lateinit var launcher: ActivityResultLauncher<Intent>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //使用App可以绘制到系统栏(导航栏、状态栏)
 //        WindowCompat.setDecorFitsSystemWindows(window, false)
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult(), this)
         binding = createBinding()
         setContentView(binding.root)
 
@@ -44,9 +41,5 @@ abstract class BaseActivity<T: ViewBinding>: AppCompatActivity(), ActivityResult
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onActivityResult(result: ActivityResult) {
-
     }
 }

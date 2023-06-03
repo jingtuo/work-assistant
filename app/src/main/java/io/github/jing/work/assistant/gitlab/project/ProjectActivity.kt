@@ -1,75 +1,52 @@
 package io.github.jing.work.assistant.gitlab.project
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
+import android.view.View.OnClickListener
 import com.google.android.material.snackbar.Snackbar
 import io.github.jing.arch.base.BaseActivity
-import io.github.jing.arch.base.OnClickItemListener
 import io.github.jing.work.assistant.R
 import io.github.jing.work.assistant.databinding.ActivityProjectBinding
-import io.github.jing.work.assistant.gitlab.data.MergeRequest
-import io.github.jing.work.assistant.gitlab.project.widget.MergeRequestAdapter
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import io.github.jing.work.assistant.gitlab.Keys
+import io.github.jing.work.assistant.gitlab.mr.MergeRequestActivity
 
-class ProjectActivity : BaseActivity<ActivityProjectBinding>() {
-
-    private lateinit var viewModel: ProjectViewModel
+class ProjectActivity : BaseActivity<ActivityProjectBinding>(), OnClickListener {
 
     private var projectId: Int? = null
-
+    private var projectName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        projectId = intent.getIntExtra(PROJECT_ID, 0)
+        projectId = intent.getIntExtra(Keys.PROJECT_ID, 0)
+        projectName = intent.getStringExtra(Keys.PROJECT_NAME)
         if (projectId == 0) {
             finish()
             return
         }
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.root.findViewById(R.id.toolbar))
+        title = projectName
         enableBack()
-        viewModel = ViewModelProvider(this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application))[ProjectViewModel::class.java]
-
-        val divider = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        divider.setDrawable(ContextCompat.getDrawable(this, R.drawable.horizontal_divider)!!)
-        binding.recyclerView.addItemDecoration(divider)
-        binding.recyclerView.adapter = MergeRequestAdapter(this, object:OnClickItemListener<MergeRequest> {
-            override fun onClick(view: View, data: MergeRequest) {
-
-            }
-        })
-//        appBarConfiguration = AppBarConfiguration(navController.graph)
-//        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        loadMergeRequests()
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAnchorView(R.id.fab)
+        binding.tvMergeRequest.setOnClickListener(this)
+        binding.btnCreateProject.setOnClickListener { view ->
+            Snackbar.make(view, "TODO Create Project", Snackbar.LENGTH_LONG)
+                .setAnchorView(R.id.btn_create_project)
                 .setAction("Action", null).show()
         }
 
-    }
-
-    private fun loadMergeRequests() {
-        lifecycleScope.launch {
-            viewModel.mergeRequests(projectId!!, "").collectLatest { pagingData ->
-                val adapter = binding.recyclerView.adapter as MergeRequestAdapter
-                adapter.submitData(pagingData)
-            }
-        }
     }
 
     override fun createBinding(): ActivityProjectBinding {
         return ActivityProjectBinding.inflate(layoutInflater)
     }
 
-    companion object {
-        const val PROJECT_ID = "PROJECT_ID"
+    override fun onClick(v: View) {
+        val id = v.id
+        if (id == R.id.tv_merge_request) {
+            val intent = Intent(this, MergeRequestActivity::class.java).apply {
+                putExtra(Keys.PROJECT_ID, projectId)
+            }
+            startActivity(intent)
+        }
     }
 }

@@ -52,6 +52,8 @@ data class MergeRequest(val id: Int, val iid: Int,  val projectId: Int): BaseDat
 
     var allowMaintainerToPush: Boolean = false
 
+    var changes: Array<MrChange>? = null
+
     override fun getCompareId(): Int {
         return id
     }
