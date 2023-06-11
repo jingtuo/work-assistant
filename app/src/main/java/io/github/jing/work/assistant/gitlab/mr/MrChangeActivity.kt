@@ -1,9 +1,12 @@
 package io.github.jing.work.assistant.gitlab.mr
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.android.material.snackbar.Snackbar
 import io.github.jing.arch.base.BaseActivity
 import io.github.jing.work.assistant.R
 import io.github.jing.work.assistant.databinding.ActivityMrChangeBinding
@@ -38,16 +41,43 @@ class MrChangeActivity : BaseActivity<ActivityMrChangeBinding>() {
         binding.recyclerView.addItemDecoration(divider)
         binding.recyclerView.adapter = MrChangeAdapter(this)
 
-        viewModel.mrChanges.observe(this) { it ->
+        viewModel.mrChanges().observe(this) { it ->
             val adapter = binding.recyclerView.adapter as MrChangeAdapter
             adapter.submitList(it.toList())
         }
 
         viewModel.loadMrChanges(projectId!!, mrIid!!)
+        viewModel.toastMsg().observe(this) {
+            Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+        }
     }
 
     override fun createBinding(): ActivityMrChangeBinding {
         return ActivityMrChangeBinding.inflate(layoutInflater)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.mr_change, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (R.id.merge == item.itemId) {
+            //merge
+            viewModel.mergeMR()
+            return true
+        }
+        if (R.id.rebase == item.itemId) {
+            //rebase
+            viewModel.rebaseMr()
+            return true
+        }
+        if (R.id.close == item.itemId) {
+            //close
+            viewModel.closeMR()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 

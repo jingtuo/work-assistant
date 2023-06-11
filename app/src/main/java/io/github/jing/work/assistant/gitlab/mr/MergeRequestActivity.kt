@@ -15,7 +15,6 @@ import io.github.jing.work.assistant.databinding.ActivityMergeRequestBinding
 import io.github.jing.work.assistant.gitlab.Keys
 import io.github.jing.work.assistant.gitlab.data.MergeRequest
 import io.github.jing.work.assistant.gitlab.mr.widget.MergeRequestAdapter
-import io.github.jing.work.assistant.gitlab.mr.widget.OnChangeMRListener
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -53,26 +52,15 @@ class MergeRequestActivity : BaseActivity<ActivityMergeRequestBinding>() {
                 }
                 startActivity(intent)
             }
-        }, object : OnChangeMRListener {
-            override fun onMergeMR(view: View, mr: MergeRequest) {
-                viewModel.mergeMR(mr)
-            }
-
-            override fun onCloseMR(view: View, mr: MergeRequest) {
-                viewModel.closeMR(mr)
-            }
-
         })
-        binding.btnCreateMergeRequest.setOnClickListener { view ->
-            Snackbar.make(view, "TODO Create Merge Request", Snackbar.LENGTH_LONG)
-                .setAnchorView(R.id.btn_create_merge_request)
-                .setAction("Action", null).show()
+        binding.btnCreateMergeRequest.setOnClickListener {
+            val intent = Intent(this@MergeRequestActivity, CreateMrActivity::class.java).apply {
+                putExtra(Keys.PROJECT_ID, projectId!!)
+            }
+            startActivity(intent)
         }
 
         loadMergeRequests()
-        viewModel.toastMsg().observe(this) {
-            Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
-        }
     }
 
     override fun createBinding(): ActivityMergeRequestBinding {

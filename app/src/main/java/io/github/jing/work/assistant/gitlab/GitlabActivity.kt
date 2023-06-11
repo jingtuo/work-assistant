@@ -20,7 +20,7 @@ import io.github.jing.work.assistant.databinding.ActivityGitlabBinding
 import io.github.jing.work.assistant.gitlab.data.GitlabManager
 import io.github.jing.work.assistant.gitlab.data.Project
 import io.github.jing.work.assistant.gitlab.project.ProjectActivity
-import io.github.jing.work.assistant.gitlab.settings.GitlabSettingsActivity
+import io.github.jing.work.assistant.gitlab.setting.GitlabSettingsActivity
 import io.github.jing.work.assistant.gitlab.widget.ProjectAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

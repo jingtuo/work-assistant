@@ -27,8 +27,6 @@ class MergeRequestViewModel(val app: Application) : AndroidViewModel(app) {
 
     private val mDisposable: CompositeDisposable = CompositeDisposable()
 
-    private val toastMsg: MutableLiveData<String> = MutableLiveData()
-
     fun mergeRequests(id: Int, search: String): Flow<PagingData<MergeRequest>> {
         pager = Pager(
             PagingConfig(initialLoadSize = 10, pageSize = 10, prefetchDistance = 1), 1
@@ -36,46 +34,10 @@ class MergeRequestViewModel(val app: Application) : AndroidViewModel(app) {
         return pager!!.flow.cachedIn(viewModelScope)
     }
 
-    fun mergeMR(mr: MergeRequest) {
-        mDisposable.add(
-            GitlabManager.instance.gitlab!!.mergeMR(mr.projectId, mr.iid)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (MrState.MERGED == it.state) {
-                        toastMsg.value = app.getString(R.string.merge_success)
-                    }
-                }, {
-                    toastMsg.value = it.message
-                })
-        )
-    }
-
-    fun closeMR(mr: MergeRequest) {
-        mDisposable.add(GitlabManager.instance.gitlab!!.updateMR(
-            mr.projectId,
-            mr.iid,
-            stateEvent = "close"
-        )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                if (MrState.MERGED == it.state) {
-                    toastMsg.value = app.getString(R.string.close_success)
-                }
-            }, {
-                toastMsg.value = it.message
-            })
-        )
-    }
 
     override fun onCleared() {
         super.onCleared()
         mDisposable.dispose()
         mDisposable.clear()
-    }
-
-    fun toastMsg(): LiveData<String> {
-        return toastMsg
     }
 }

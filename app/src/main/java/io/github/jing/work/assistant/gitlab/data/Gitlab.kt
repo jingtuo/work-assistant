@@ -49,8 +49,10 @@ interface Gitlab {
 
     /**
      * 仅请求分配给当前用户的MR
+     * scope支持: all, created_by_me, assigned_to_me
+     * @param orderBy 可取值: created_at,updated_at, 默认值created_at
      */
-    @GET("projects/{pid}/merge_requests?scope=assigned-to-me")
+    @GET("projects/{pid}/merge_requests")
     fun projectMR(
         @Path("pid") pid: Int,
         @Query("search") search: String, //匹配标题和描述
@@ -77,4 +79,49 @@ interface Gitlab {
         @Field("description") description: String? = null,
         @Field("state_event") stateEvent: String = "close" //close、reopen
     ): Single<MergeRequest>
+
+    /**
+     * 创建MR
+     */
+    @POST("projects/{pid}/merge_requests")
+    fun createMr(
+        @Path("pid") pid: Int,
+        @Field("source_branch") sourceBranch: String,
+        @Field("target_branch") targetBranch: String,
+        @Field("title") title: String,
+        @Field("description") description: String? = null,
+        @Field("assignee_id") assigneeId: Int? = null
+    ): Single<MergeRequest>
+
+
+    @GET("users/{userId}/projects")
+    fun userOwnedProjects(
+        @Path("userId") userId: Int,
+        @Query("search") search: String = "",
+        @Query("order_by") orderBy: String = "last_activity_at",
+        @Query("sort") sort: Sort = Sort.DESC
+    ): Single<List<Project>>
+
+    @GET("users/{userId}/projects")
+    fun userStarredProjects(
+        @Path("userId") userId: Int,
+        @Query("search") search: String = "",
+        @Query("order_by") orderBy: String = "last_activity_at",
+        @Query("sort") sort: Sort = Sort.DESC
+    ): Single<List<Project>>
+
+    /**
+     * 单个工程的用户
+     */
+    @GET("projects/{pid}/users")
+    fun projectUsers(@Path("pid") pid: Int, @Query("search") search: String = ""): Single<List<User>>
+
+    /**
+     * 单个工程的分支
+     */
+    @GET("projects/{pid}/repository/branches")
+    fun projectBranches(@Path("pid") pid: Int,
+                        @Query("search") search: String = "",
+                        @Query("page") page: Int = 1,
+                        @Query("per_page") sizeOfPage: Int = 20): Single<List<Branch>>
 }

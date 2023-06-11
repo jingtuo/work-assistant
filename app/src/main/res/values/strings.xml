@@ -28,13 +28,9 @@
     <string name="close">关闭</string>
     <string name="project_name">工程名</string>
     <string name="title_activity_project">ProjectActivity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
     <string name="gitlab_merge">Merge</string>
+    <string name="gitlab_rebase">Rebase</string>
     <string name="gitlab_close">Close</string>
     <string name="create_project">创建工程</string>
     <string name="create_merge_request">创建Merge Request</string>
@@ -42,4 +38,12 @@
     <string name="merge_into">Merge %1$s into %2$s</string>
     <string name="merge_success">Merge Success</string>
     <string name="close_success">Close Success</string>
+    <string name="rebase_success">Rebase Success</string>
+    <string name="rebasing">Rebasing</string>
+    <string name="create_success">创建成功</string>
+    <string name="submit">提交</string>
+    <string name="source_branch">源分支</string>
+    <string name="target_branch">目标分支</string>
+    <string name="title">标题</string>
+    <string name="assignee_user">分配给</string>
 </resources>

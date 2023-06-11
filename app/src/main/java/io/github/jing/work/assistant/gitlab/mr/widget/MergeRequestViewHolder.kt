@@ -11,7 +11,6 @@ import io.github.jing.work.assistant.gitlab.data.MrState
 class MergeRequestViewHolder(
     private val binding: GitlabItemMergeRequestBinding,
     private val onClickItemListener: OnClickItemListener<MergeRequest>,
-    private val onChangeMRListener: OnChangeMRListener
 ) : ViewHolder(binding.root) {
 
     private lateinit var data: MergeRequest
@@ -19,12 +18,6 @@ class MergeRequestViewHolder(
     init {
         binding.root.setOnClickListener {
             onClickItemListener.onClick(it, data)
-        }
-        binding.btnMerge.setOnClickListener {
-            onChangeMRListener.onMergeMR(it, data)
-        }
-        binding.btnClose.setOnClickListener {
-            onChangeMRListener.onCloseMR(it, data)
         }
     }
 

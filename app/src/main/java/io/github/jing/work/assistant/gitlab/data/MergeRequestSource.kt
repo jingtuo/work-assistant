@@ -10,7 +10,10 @@ class MergeRequestSource(private val service: Gitlab, private val pid: Int, priv
 
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, MergeRequest>> {
         val page = params.key ?: 1
-        return service.projectMR(pid, search, state = MrState.ALL, page = page, sizeOfPage = params.loadSize)
+        return service.projectMR(pid, search, state = MrState.ALL,
+
+            page = page,
+            sizeOfPage = params.loadSize)
             .subscribeOn(Schedulers.io())
             .map { data -> toLoadResult(page, data, params.loadSize) }
             .onErrorReturn {

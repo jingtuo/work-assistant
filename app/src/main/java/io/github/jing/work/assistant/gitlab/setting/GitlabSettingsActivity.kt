@@ -1,4 +1,4 @@
-package io.github.jing.work.assistant.gitlab.settings
+package io.github.jing.work.assistant.gitlab.setting
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -28,6 +28,7 @@ class GitlabSettingsActivity : AppCompatActivity() {
             viewModel.save(binding.etDomainName.text.toString(), binding.etIpAddress.text.toString(),
                 binding.rbYes.isChecked, binding.etApiVersion.text.toString(),
                 binding.etPersonalAccessToken.text.toString())
+            setResult(RESULT_OK)
             finish()
         }
         //显示返回按钮

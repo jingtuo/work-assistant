@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/merge"
+        android:title="@string/gitlab_merge"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/rebase"
+        android:title="@string/gitlab_rebase"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/close"
+        android:title="@string/gitlab_close"
+        app:showAsAction="never" />
+</menu>

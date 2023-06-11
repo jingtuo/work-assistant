@@ -1,4 +1,4 @@
-package io.github.jing.work.assistant.gitlab.settings
+package io.github.jing.work.assistant.gitlab.setting
 
 import android.app.Application
 import android.content.Context

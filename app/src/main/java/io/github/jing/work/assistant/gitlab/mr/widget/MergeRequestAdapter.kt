@@ -9,8 +9,7 @@ import io.github.jing.work.assistant.databinding.GitlabItemMergeRequestBinding
 import io.github.jing.work.assistant.gitlab.data.DiffCallback
 import io.github.jing.work.assistant.gitlab.data.MergeRequest
 
-class MergeRequestAdapter(context: Context, private val onClickItemListener: OnClickItemListener<MergeRequest>,
-                          private val onChangeMRListener: OnChangeMRListener
+class MergeRequestAdapter(context: Context, private val onClickItemListener: OnClickItemListener<MergeRequest>
 )
     : PagingDataAdapter<MergeRequest, MergeRequestViewHolder>(DiffCallback()) {
 
@@ -22,7 +21,7 @@ class MergeRequestAdapter(context: Context, private val onClickItemListener: OnC
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MergeRequestViewHolder {
         return MergeRequestViewHolder(GitlabItemMergeRequestBinding.inflate(inflater, parent, false),
-            onClickItemListener, onChangeMRListener)
+            onClickItemListener)
     }
 
     override fun onBindViewHolder(holder: MergeRequestViewHolder, position: Int) {
